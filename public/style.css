@@ -1,5 +1,5 @@
 body{
-    background-color:brown
+    background-color: navy
 }
 
 .first{
@@ -10,6 +10,7 @@ body{
     text-align: center;
     justify-content: center;
     font-size: 30px;
+    color: white;
 
 }
 
@@ -48,6 +49,10 @@ button{
     margin-bottom: 30px;
 }
 
+.dropdown i{
+    color: white;
+}
+
 #genreContainer{
     display: flex;
     color: aliceblue;
@@ -55,10 +60,31 @@ button{
     gap: 20px;
 }
 
-.movie-card{
+.movie-card {
     width: 200px;
     padding:10px;
     border-radius:10px;
     box-shadow:0 4px 8px rgba(0,0,0,0.2);
     background-color: #1e1e1e;
+    transition: transform 0.3s ease;
+}
+.movie-card:hover {
+    transform: translateY(-10px);
+  }
+.dropdown label{
+    color: white;
+}
+.hero{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)),url('krists-luhaers-AtPWnYNDJnM-unsplash.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    min-height: 50vh;
+}
+.hero-tagline{
+    color:white;
+    margin-left: 100px;
 }
