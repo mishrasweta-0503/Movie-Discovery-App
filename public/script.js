@@ -1,83 +1,103 @@
-const tmdbBaseUrl = 'https://api.themoviedb.org/3'; //base url for all API requests to the movie database(TMDB);
-const tmdbKey = '899c5e9c66472ff147b7021812d68e53'; //this key identifies you the TMDB
+// 1. Try to import local config. If it's not there (on Netlify), handle the error gracefully
+let tmdbKey;
 
-//next step is to retreive the endpoint which will give us the genres list
+try {
+  const config = await import('../config.js');
+  tmdbKey = config.tmdbKey;
+} catch (e) {
+  // If config.js is missing, look for Netlify's environment variable
+  tmdbKey = typeof process !== 'undefined' ? process.env.TMDB_KEY : undefined;
+}
+
+const tmdbBaseUrl = 'https://api.themoviedb.org/3';
 
 //getGenres function will extract the genres list
 
 const getGenres = async() => {
-    const genreslist = []
-    const genreRequestEndpoint = "/genre/movie/list";
-    const requestParams = `?api_key=${tmdbKey}`;
-    const urlToFetch = `${tmdbBaseUrl}${genreRequestEndpoint}${requestParams}`;
-    try{
-        const response = await fetch(urlToFetch);
-        if(response.ok){
-          const jsonResponse = await response.json();
-          const genres = jsonResponse.genres;
-          const genreContainer = document.getElementById("genreContainer");
-          for(const genre of genres){
-            genreslist.push(genre.name)
-          }
-          populateGenres(genres)
-        }
-    } catch(error){
-        console.log(error)
+  try {
+    const genrePath = '/genre/movie/list';
+    const queryParam = `?api_key=${tmdbKey}`;
+    const finalPath = `${tmdbBaseUrl}${genrePath}${queryParam}`;
+    const response = await fetch(finalPath);
+    if(response.ok){
+      const jsonResponse = await response.json();
+      populateGenres(jsonResponse.genres);
     }
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 getGenres();
 
-//populateGenres function will populate the genres list in the dropdown
-
-const populateGenres = async (genres) => {
-    const genreSelect = document.getElementById("genreSelect");
-    for(let i = 0; i < genres.length; i++){
-       const genre = genres[i];
-       var option = document.createElement("option");
-       option.value = genre.id;
-       option.text = genre.name;
-       if(i === 0){
-        option.selected = true;
-       }
-       genreSelect.add(option);
-    }
-    console.log("getGenreId function is running!");
-    getGenreId()
-    }
-
-const getMoviesByGenre = async (genreId) => {
-    const discoverMovieEndpoint = '/discover/movie';
-    const requestParams = `?api_key=${tmdbKey}&with_genres=${genreId}`;
-    const urlToFetch = `${tmdbBaseUrl}${discoverMovieEndpoint}${requestParams}`;
-    try{
-        const response = await fetch(urlToFetch)
-        if(response.ok){
-          const jsonResponse = await response.json();
-          //console.log(jsonResponse)
-          const movies = jsonResponse.results;
-          displayMovies(movies)
-        }
-      } catch(error){
-        console.log(error)
-      }
+function getSelectedGenre(){
+  const genreDropdown = document.getElementById('genreSelect');
+  const genreButton = document.getElementById('play');
+  genreButton.addEventListener('click', () => {
+    const dropdownvalue = genreDropdown.value;
+    getMoviesByGenre(dropdownvalue);
+  })
 }
 
-const displayMovies = async(movies) => {
-    const displaymovie = document.getElementById("genreContainer");
-    displaymovie.innerHTML = ""; //this ensures that the container is empty each time before new movies are shown
-    for(let i = 0; i < movies.length; i++){
-        const moviedetails = document.createElement('div');
-        moviedetails.classList.add("movie-card");
-        moviedetails.textContent = movies[i].title;
-        displaymovie.appendChild(moviedetails);
-     }
+getSelectedGenre();
+
+//populateGenres function will populate the genres on to the dropdown
+
+function populateGenres(genreList){
+  const genreSelect = document.getElementById('genreSelect');
+  genreSelect.innerHTML = "";
+  genreList.forEach(genre => {
+    const option = document.createElement('option');
+    option.value = genre.id;
+    option.textContent = genre.name;
+    genreSelect.appendChild(option);
+  });
 }
 
-const getGenreId = () => {
-    const genreSelect = document.getElementById("genreSelect");
-    document.getElementById("play").addEventListener('click',function(){
-        console.log("Play button clicked! Selected genre ID:", genreSelect.value)
-        getMoviesByGenre(genreSelect.value)
-    })
+const getMoviesByGenre = async(genreId) => {
+  try {
+    const moviePath = '/discover/movie';
+    const queryParam = `?api_key=${tmdbKey}`;
+    const tmdbParam = `&with_genres=${genreId}`;
+    const finalPath = `${tmdbBaseUrl}${moviePath}${queryParam}${tmdbParam}`;
+    const response = await fetch(finalPath);
+    if(response.ok){
+      const jsonResponse = await response.json();
+      console.log(jsonResponse.results);
+      displayMovie(jsonResponse.results)
+    }
+  } catch (error) {
+    
+  }
+}
+
+function displayMovie(moviesList){
+  const movieWall = document.getElementById('genrelist');
+  movieWall.innerHTML = "";
+  const posterPath = 'https://image.tmdb.org/t/p/w500';
+  moviesList.forEach(movie => {
+    const movieCard = document.createElement('div');
+    movieCard.className = 'movie-card';
+    const title = document.createElement('h2');
+    title.textContent = movie.title;
+    const description = document.createElement('p');
+    description.textContent = movie.overview;
+    // 6. Create the Poster image element
+    const poster = document.createElement('img');
+    // Ensure the poster path actually exists before setting it
+    if (movie.poster_path) {
+      poster.src = `${posterPath}${movie.poster_path}`;
+    } else {
+      poster.src = 'https://via.placeholder.com/500x750?text=No+Poster+Available'; // Fallback if no image exists
+    }
+    poster.alt = `${movie.title} Poster`;
+    poster.style.width = '200px'; // Give it a base size so it fits neatly
+    // 7. Glue the Title, Poster, and Description inside our card
+    movieCard.appendChild(title);
+    movieCard.appendChild(poster);
+    movieCard.appendChild(description);
+
+    // 8. Put the finished movie card on our main wall container
+    movieWall.appendChild(movieCard);
+  })
 }

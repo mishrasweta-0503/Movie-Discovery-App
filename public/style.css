@@ -1,5 +1,5 @@
 body{
-    background-color: navy
+    background-color: white
 }
 
 .first{
@@ -88,3 +88,47 @@ button{
     color:white;
     margin-left: 100px;
 }
+/* 1. Turn the main list container into a centered, responsive grid */
+#genrelist {
+    display: flex;
+    flex-wrap: wrap;         /* Allows movies to wrap to the next line instead of one long row */
+    justify-content: center; /* Centers the list on your screen */
+    gap: 30px;               /* Adds breathing room between each movie card */
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;          /* Centers the entire container layout block */
+  }
+  
+  /* 2. Style each individual movie card wrapper */
+  .movie-card {
+    background-color: #1c1c1c; /* A slightly lighter dark grey to contrast with a pure black background */
+    border-radius: 8px;
+    padding: 20px;
+    width: 250px;              /* Gives every card a uniform size */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;       /* Centers the poster and text inside the card */
+    text-align: center;
+  }
+  
+  /* 3. Style the images inside the cards */
+  .movie-card img {
+    border-radius: 6px;
+    margin-bottom: 15px;
+    max-width: 100%;           /* Ensures the poster scales perfectly inside its 250px card */
+    height: auto;
+  }
+  
+  /* 4. FIX THE CONTRAST: Make the text readable against dark backgrounds */
+  .movie-card h2 {
+    color: #ffffff;            /* Crisp white for movie titles */
+    font-size: 1.2rem;
+    margin: 10px 0;
+  }
+  
+  .movie-card p {
+    color: #b3b3b3;            /* A softer light grey for the summaries so it is easy on the eyes */
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
