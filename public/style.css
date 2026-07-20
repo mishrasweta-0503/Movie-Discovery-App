@@ -132,3 +132,21 @@ button{
     font-size: 0.9rem;
     line-height: 1.4;
   }
+
+/* Responsiveness for displays smaller than 600px wide */
+@media (max-width: 600px) {
+    .hero-content h1 {
+      font-size: 2rem; /* Shrinks the massive title header slightly so it fits perfectly on one line */
+    }
+    
+    #genrelist {
+      padding: 20px 10px; /* Removes wide margins on tiny screens to optimize whitespace */
+      gap: 15px;
+    }
+  
+    .movie-card {
+      width: 100%; /* Allows movie cards to safely span the full width of a mobile screen if desired */
+      max-width: 280px; 
+      padding: 15px;
+    }
+  }
